@@ -1,7 +1,6 @@
 import streamlit as st
 from PIL import Image
 import requests
-from bs4 import BeautifulSoup
 import numpy as np
 # from keras.preprocessing.image import  img_to_array
 from keras.models import load_model
@@ -24,11 +23,34 @@ vegetables = ['Beetroot', 'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Corn'
               'Tomato', 'Turnip']
 
 
+from html.parser import HTMLParser
+import requests
+
+# Define a custom HTML parser class
+class MyHTMLParser(HTMLParser):
+    def handle_starttag(self, tag, attrs):
+        print("Encountered a start tag:", tag)
+
+    def handle_endtag(self, tag):
+        print("Encountered an end tag :", tag)
+        if (tag=="div"):
+            print(tag.find(class_="BNeawe iBp4i AP7Wnd"))
+
+    def handle_data(self, data):
+        print("Encountered some data  :", data)
+
+ 
+
+
+# Create an instance of the custom HTML parser
+parser = MyHTMLParser()
+
 def fetch_calories(prediction):
     try:
         url = 'https://www.google.com/search?&q=calories in ' + prediction
         req = requests.get(url).text
-        scrap = BeautifulSoup(req, 'html.parser')
+        print(req)
+        scrap=parser.feed(req)
         calories = scrap.find("div", class_="BNeawe iBp4i AP7Wnd").text
         return calories
     except Exception as e:
